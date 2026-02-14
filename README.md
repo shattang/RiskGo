@@ -70,6 +70,11 @@ make test-integration  # Run a full end-to-end API scenario check
 ### `POST /api/analyze_portfolio`
 Calculates Greeks and PnL shocks for a multi-leg portfolio.
 
+**Request Schema:**
+- `positions`: Array of ticker positions.
+- `scenario_range`: Array of spot price shocks (e.g., `-0.10` for -10%).
+- `volatility` (Optional): Global override for annual volatility (e.g., `0.3`). Defaults to 30% if not provided by provider.
+
 **Example Request:**
 ```json
 {
@@ -81,7 +86,34 @@ Calculates Greeks and PnL shocks for a multi-leg portfolio.
       "legs": [{"type": "CALL", "strike": 180, "expiry": "2026-06-19"}]
     }
   ],
-  "scenario_range": [-0.10, 0, 0.10]
+  "scenario_range": [-0.10, 0, 0.10],
+  "volatility": 0.25
+}
+```
+
+**Example Response:**
+```json
+{
+  "AAPL": {
+    "-0.10": {
+      "pnl": -2473.16,
+      "delta": 97.90,
+      "gamma": 0.05,
+      "theta": 217.27
+    },
+    "0.00": {
+      "pnl": 0,
+      "delta": 97.90,
+      "gamma": 0.05,
+      "theta": 217.27
+    },
+    "0.10": {
+      "pnl": 2513.51,
+      "delta": 97.90,
+      "gamma": 0.05,
+      "theta": 217.27
+    }
+  }
 }
 ```
 
