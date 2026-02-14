@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=builder /usr/local/lib/libQuantLib.so.1* /usr/local/lib/
 COPY --from=builder /app/build/risk_engine_server /usr/local/bin/
+COPY LICENSE NOTICE /usr/local/share/doc/riskgo/
 RUN ldconfig
 
 EXPOSE 50051

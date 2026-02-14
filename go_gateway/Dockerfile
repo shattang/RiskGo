@@ -25,5 +25,6 @@ RUN go build -o gateway main.go
 FROM alpine:latest
 WORKDIR /root/
 COPY --from=builder /app/go_gateway/gateway .
+COPY LICENSE NOTICE /usr/local/share/doc/riskgo/
 EXPOSE 3000
 CMD ["./gateway"]
