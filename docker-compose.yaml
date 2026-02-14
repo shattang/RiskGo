@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: cpp_engine/Dockerfile
+    environment:
+      - SERVER_ADDR=0.0.0.0:50051
     ports:
       - "50051:50051"
 
@@ -10,6 +12,8 @@ services:
     build:
       context: .
       dockerfile: go_gateway/Dockerfile
+    environment:
+      - RISK_ENGINE_ADDR=cpp_engine:50051
     ports:
       - "3000:3000"
     depends_on:

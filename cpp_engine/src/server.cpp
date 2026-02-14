@@ -105,7 +105,9 @@ class RiskEngineServiceImpl final : public RiskEngine::Service {
 };
 
 void RunServer() {
-    std::string server_address("0.0.0.0:50051");
+    char* env_addr = std::getenv("SERVER_ADDR");
+    std::string server_address(env_addr ? env_addr : "0.0.0.0:50051");
+    
     RiskEngineServiceImpl service;
 
     ServerBuilder builder;

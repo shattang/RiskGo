@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -44,7 +45,12 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	
-	conn, err := grpc.DialContext(ctx, "cpp_engine:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	addr := os.Getenv("RISK_ENGINE_ADDR")
+	if addr == "" {
+		addr = "cpp_engine:50051"
+	}
+	
+	conn, err := grpc.DialContext(ctx, addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
