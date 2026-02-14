@@ -1,4 +1,4 @@
-.PHONY: setup build-base build up down test test-unit test-integration clean clean-all
+.PHONY: setup build-base build up spawn logs down test test-unit test-integration clean clean-all
 
 # Detect docker compose command
 DOCKER_COMPOSE := docker compose
@@ -16,6 +16,14 @@ build:
 # Now fast because it uses riskgo-base
 up:
 	$(DOCKER_COMPOSE) up --build
+
+# Start in detached mode
+spawn:
+	$(DOCKER_COMPOSE) up --build -d
+
+# Tail combined logs
+logs:
+	$(DOCKER_COMPOSE) logs -f
 
 down:
 	$(DOCKER_COMPOSE) down
