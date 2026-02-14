@@ -54,6 +54,10 @@ func main() {
 	marketProvider := market.NewYahooFinanceProvider(1 * time.Minute)
 
 	app := fiber.New()
+	app.Use(func(c *fiber.Ctx) error {
+		log.Printf("Incoming request: %s %s", c.Method(), c.Path())
+		return c.Next()
+	})
 
 	app.Post("/api/analyze_portfolio", func(c *fiber.Ctx) error {
 		var req AnalyzeRequest
@@ -115,6 +119,7 @@ func main() {
 					})
 				}
 
+				log.Printf("Calling C++ engine for %s (shock %.2f)", pos.Ticker, shock)
 				resp, err := client.CalculateBetaScenario(c.Context(), grpcReq)
 				if err != nil {
 					log.Printf("gRPC error for %s scenario %f: %v", pos.Ticker, shock, err)

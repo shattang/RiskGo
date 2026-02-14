@@ -11,6 +11,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
+#include "logger.h"
+
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -25,6 +27,8 @@ namespace ql = QuantLib;
 class RiskEngineServiceImpl final : public RiskEngine::Service {
     Status CalculateBetaScenario(ServerContext* context, const ScenarioRequest* request,
                                 ScenarioResponse* response) override {
+        Logger::info("Received scenario request for spot: " + std::to_string(request->spot_price()) + 
+                     " shock: " + std::to_string(request->scenario_pct_change()));
         try {
             double spot = request->spot_price();
             double rfr = request->risk_free_rate();
@@ -94,6 +98,7 @@ class RiskEngineServiceImpl final : public RiskEngine::Service {
 
             return Status::OK;
         } catch (const std::exception& e) {
+            Logger::error("Error calculating scenario: " + std::string(e.what()));
             return Status(grpc::StatusCode::INTERNAL, e.what());
         }
     }
@@ -108,10 +113,10 @@ void RunServer() {
     builder.RegisterService(&service);
     std::unique_ptr<Server> server(builder.BuildAndStart());
     if (server) {
-        std::cout << "Server listening on " << server_address << std::endl;
+        Logger::info("Server listening on " + server_address);
         server->Wait();
     } else {
-        std::cerr << "Failed to start server" << std::endl;
+        Logger::error("Failed to start server");
     }
 }
 
