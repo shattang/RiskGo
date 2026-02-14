@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package riskengine;
+
+option go_package = "./proto";
+
+service RiskEngine {
+  rpc CalculateBetaScenario (ScenarioRequest) returns (ScenarioResponse);
+}
+
+message OptionLeg {
+  enum Type {
+    CALL = 0;
+    PUT = 1;
+  }
+  Type type = 1;
+  double strike = 2;
+  string expiry = 3; // YYYY-MM-DD
+  double quantity = 4;
+}
+
+message ScenarioRequest {
+  double spot_price = 1;
+  double risk_free_rate = 2;
+  double volatility = 3;
+  double scenario_pct_change = 4;
+  double beta = 5;
+  repeated OptionLeg legs = 6;
+}
+
+message ScenarioResponse {
+  double scenario_pnl = 1;
+  double scenario_delta = 2;
+  double scenario_gamma = 3;
+  double scenario_theta = 4;
+}

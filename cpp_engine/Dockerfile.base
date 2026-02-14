@@ -1,0 +1,24 @@
+# Dockerfile.base - Run 'make build-base' once to cache QuantLib
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    libboost-all-dev \
+    libgrpc++-dev \
+    libprotobuf-dev \
+    protobuf-compiler-grpc \
+    pkg-config
+
+# Build QuantLib from vendorized source
+WORKDIR /opt
+COPY vendor/quantlib ./quantlib
+RUN cd quantlib && \
+    mkdir -p build && cd build && \
+    cmake .. -DQL_BUILD_BENCHMARKS=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig

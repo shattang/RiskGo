@@ -1,0 +1,16 @@
+services:
+  cpp_engine:
+    build:
+      context: .
+      dockerfile: cpp_engine/Dockerfile
+    ports:
+      - "50051:50051"
+
+  go_gateway:
+    build:
+      context: .
+      dockerfile: go_gateway/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - cpp_engine
